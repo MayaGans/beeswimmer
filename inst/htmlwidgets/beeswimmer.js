@@ -12,7 +12,7 @@ HTMLWidgets.widget({
 
       renderValue: function(x) {
 
-        let data = HTMLWidgets.dataframeToD3(x.dat))
+        let data = HTMLWidgets.dataframeToD3(x.dat)
         beeswarm(el.id, data, x.xIsAvisit, x.uniqAlertCat, x.xDomain);
 
       },

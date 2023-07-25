@@ -6,7 +6,6 @@ d3.selection.prototype.moveToFront = function() {
 
 
 function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain) {
-
   function createScales(xIsAvisit, xDomain) {
       let scales = {
         width: window.innerWidth * 0.9,

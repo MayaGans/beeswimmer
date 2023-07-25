@@ -1,11 +1,11 @@
 #' @import htmlwidgets
 #'
 #' @export
-beeswimmer <- function(x_domain, unique_alert_cat, width = NULL, height = NULL, elementId = NULL) {
+beeswimmer <- function(data, x_domain, unique_alert_cat, width = NULL, height = NULL, elementId = NULL) {
 
   # forward options using x
   x = list(
-    # dat = data.frame(x = 1:3, y = letters[1:3]),
+    dat = data,
     xDomain = x_domain,
     uniqAlertCat = unique_alert_cat,
     xIsAvisit = is.character(x_domain)
