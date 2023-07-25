@@ -1,0 +1,100 @@
+body {
+    margin: 0
+}
+
+#wrapper {
+    position: relative;
+}
+
+.patient-lane {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+}
+
+.patient-lane:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.patient-lane:nth-child(odd) {
+    background-color: rgb(245,245,245);
+}
+
+.patient-id {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tooltip {
+    opacity: 0;
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    z-index: 10;
+    transition: all 0.2s ease-out;
+    pointer-events: none;
+}
+
+.xaxis {
+    background: white !important;
+    position: sticky;
+    position: -webkit-sticky;
+    bottom: 0;
+}
+
+.custom-tooltip,
+.last-collected-tooltip {
+    padding: 12px 20px;
+    background: white;
+    color: black;
+    filter: drop-shadow(0 0 0.25rem gray);
+    max-width: 800px;
+  }
+
+  .tooltip-text {
+    display: flex;
+    gap: 30px;
+  }
+
+  .tooltip-title {
+    font-size: 1.2rem;
+    font-weight: 500
+  }
+
+  .tooltip-table-title {
+    font-weight: 800;
+  }
+
+  .tooltip-table {
+    display: grid;
+    grid-template-columns: 1fr 0.25fr 0.25fr 0.25fr 0.25fr;
+    margin-top: 23px;
+    justify-content: space-around;
+    gap: 17px;
+    font-size: 1rem;
+    align-items: center;
+  }
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    background: white;
+    padding-bottom: 7px;
+}
+
+.legend div {
+    width: max-content;
+}
+
+.tick-label-start {
+    text-anchor: start;
+    transform: rotate(30deg)
+}
+
+.last-collected-tooltip {
+    text-align: center;
+    white-space: nowrap;
+}
