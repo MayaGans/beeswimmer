@@ -214,7 +214,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain) {
       const sim = d3.forceSimulation(data)
         .force("charge", d3.forceManyBody().strength(1))
         .force("collide", d3.forceCollide().radius((d) => d.count * 7)) // 1 is padding
-        .force("x", d3.forceX().x((d) => scales.xScale(d.timepoint)))
+        .force("x", d3.forceX().x((d) => scales.xScale(d.timing)))
         .force("y", d3.forceY(yScale(0.5)))
 
       const circles = bounds.append("g")
