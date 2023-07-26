@@ -62,7 +62,7 @@ body {
 
 .tooltip-table {
   display: grid;
-  grid-template-columns: 1fr 0.25fr 0.25fr 0.25fr 0.25fr;
+  grid-template-columns: 1fr 0.25fr 0.25fr 0.25fr 0.25fr 0.25fr 0.25fr 0.25fr 0.25fr;
   margin-top: 23px;
   justify-content: space-around;
   gap: 17px;
