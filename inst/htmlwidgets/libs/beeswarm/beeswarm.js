@@ -5,7 +5,7 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 
-function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain) {
+function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
   function createScales(xIsAvisit, xDomain) {
       let scales = {
         width: window.innerWidth * 0.9,
@@ -387,6 +387,13 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain) {
     const uniquePatient = [...new Set(d3.map(data, d => d.patient))]
 
     const importantAvisits = ["Screening", "Baseline"]
+
+    if (currSvg !== null) {
+      el.querySelector(".legend").innerHTML = null
+      el.querySelector(".wrapper").innerHTML = null
+      el.querySelector(".tooltip").innerHTML = null
+      el.querySelector(".xaxis").innerHTML = null
+    }
 
     for (let i = 0; i < uniquePatient.length; i++) {
 
