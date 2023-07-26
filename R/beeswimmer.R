@@ -1,14 +1,24 @@
 #' @import htmlwidgets
 #'
 #' @export
-beeswimmer <- function(data, x_domain, unique_alert_cat, width = NULL, height = NULL, elementId = NULL) {
+beeswimmer <- function(data, unique_alert_cat, width = NULL, height = NULL, elementId = NULL) {
+
+  # Determine if X is in AVISIT (is factor) or ADY (is dbl)
+
+  x_is_avisit <- class(data$timing) == "factor"
+
+  if (x_is_avisit) {
+    x_domain <- levels(data$timing)
+  } else {
+    x_domain <- c(min(data$timing), max(data$timing))
+  }
 
   # forward options using x
   x = list(
     dat = data,
     xDomain = x_domain,
     uniqAlertCat = unique_alert_cat,
-    xIsAvisit = is.character(x_domain)
+    xIsAvisit = x_is_avisit
   )
 
   # create widget
