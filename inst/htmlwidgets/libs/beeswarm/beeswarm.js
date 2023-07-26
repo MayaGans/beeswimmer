@@ -389,10 +389,10 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
     const importantAvisits = ["Screening", "Baseline"]
 
     if (currSvg !== null) {
-      el.querySelector(".legend").innerHTML = null
-      el.querySelector(".wrapper").innerHTML = null
-      el.querySelector(".tooltip").innerHTML = null
-      el.querySelector(".xaxis").innerHTML = null
+      document.getElementById(el).querySelector(".legend").innerHTML = null
+      document.getElementById(el).querySelector(".wrapper").innerHTML = null
+      document.getElementById(el).querySelector(".tooltip").innerHTML = null
+      document.getElementById(el).querySelector(".xaxis").innerHTML = null
     }
 
     for (let i = 0; i < uniquePatient.length; i++) {
