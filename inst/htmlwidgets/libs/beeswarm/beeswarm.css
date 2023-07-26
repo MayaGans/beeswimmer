@@ -44,36 +44,31 @@ body {
 
 .custom-tooltip,
 .last-collected-tooltip {
-    padding: 12px 20px;
-    background: white;
-    color: black;
-    filter: drop-shadow(0 0 0.25rem gray);
-    max-width: 800px;
-  }
+  padding: 12px 20px;
+  background: white;
+  color: black;
+  filter: drop-shadow(0 0 0.25rem gray);
+  max-width: 800px;
+}
 
-  .tooltip-text {
-    display: flex;
-    gap: 30px;
-  }
+.tooltip-title {
+  font-size: 1.2rem;
+  font-weight: 500
+}
 
-  .tooltip-title {
-    font-size: 1.2rem;
-    font-weight: 500
-  }
+.tooltip-table-title {
+  font-weight: 800;
+}
 
-  .tooltip-table-title {
-    font-weight: 800;
-  }
-
-  .tooltip-table {
-    display: grid;
-    grid-template-columns: 1fr 0.25fr 0.25fr 0.25fr 0.25fr;
-    margin-top: 23px;
-    justify-content: space-around;
-    gap: 17px;
-    font-size: 1rem;
-    align-items: center;
-  }
+.tooltip-table {
+  display: grid;
+  grid-template-columns: 1fr 0.25fr 0.25fr 0.25fr 0.25fr;
+  margin-top: 23px;
+  justify-content: space-around;
+  gap: 17px;
+  font-size: 1rem;
+  align-items: center;
+}
 
 .legend {
     display: flex;
