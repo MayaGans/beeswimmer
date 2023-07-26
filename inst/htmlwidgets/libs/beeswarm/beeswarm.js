@@ -93,7 +93,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain) {
       if (xIsAvisit) {
         var xDomainToShow = xDomain.filter((item) => {
           return(
-            !item.includes("Unscheduled") & !item.includes("Open Label")
+            !item.includes("Unscheduled") & !item.includes("Open Label") & !item.includes("OL") & !item.includes("Unsch")
           )
         })
 
