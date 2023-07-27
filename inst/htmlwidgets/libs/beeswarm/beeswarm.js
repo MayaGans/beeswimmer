@@ -130,8 +130,8 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .append("g")
         .call(xAxisGenerator)
         .selectAll("text")
-        .attr('font-size', 20)
-        // Give class to some tick values for formatting (only for AVISIT xaxis)
+        .attr('font-size', '15px')
+        /*
         .attr("class", (d, index) => {
           if (xIsAvisit) {
             if (importantAvisits.includes(d)) {
@@ -141,6 +141,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
             }
           }
         })
+        */
     }
 
     function bubbleChart(el, data, patient, xDomain, uniqueAlertCat, xIsAvisit, colorScale, last_collected) {

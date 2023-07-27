@@ -42,6 +42,16 @@ body {
     bottom: 0;
 }
 
+
+.xaxis .patient-id {
+    z-index: 1;
+}
+
+.xaxis svg {
+    z-index: 10000;
+    overflow: visible !important;
+}
+
 .custom-tooltip,
 .last-collected-tooltip {
   padding: 12px 20px;
