@@ -132,7 +132,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .append("g")
         .call(xAxisGenerator)
         .selectAll("text")
-        .attr('font-size', 15)
+        .attr('font-size', 10)
         // Give class to some tick values for formatting (only for AVISIT xaxis)
         /*
         .attr("class", (d, index) => {
