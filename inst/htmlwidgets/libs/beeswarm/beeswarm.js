@@ -124,7 +124,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .append("svg")
         .attr("class", "patient-chart")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", `0 0 ${scales.width-scales.dimensions.margin.left} ${scales.dimensions.height}`)
+        .attr("viewBox", `0 0 ${scales.width} ${scales.dimensions.height}`)
         .style("transform", `translateX(${scales.dimensions.margin.left}px)`)
         .classed("svg-content", true)
         .append("g")
