@@ -49,7 +49,7 @@ body {
 
 .xaxis svg {
     z-index: 10000;
-    overflow: visible;
+    overflow: visible !important;
 }
 
 .custom-tooltip,
