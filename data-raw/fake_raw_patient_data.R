@@ -1,4 +1,5 @@
-# I'm making this data in Excel, but I'll put some documentation here.
+# I'm making this data in Excel, and the codes at the bottom won't work
+# without the excel file. But I'll put some documentation here.
 
 # Essentially, we're building a short ADLB, with only the columns we're interested in
 # - SUBJID, AVISIT, ADY, ADT for patient identification
@@ -36,4 +37,31 @@
 # Second row is a renal functional test alert that didn't trigger AESI/DLT
 # Third row is an other functional test alert that caused Thrombo AESI and DLT
 
-# AVISIT == "Week1,2,3,..." for all subsequent rows. Each week only has one event that doesn't cause AESI/DLT
+# Fourth/Fifth are Week 1, Liver test (no AESI/DLT). Since we don't care about counts
+# anymore, we simply show both the rows as separate bubble
+
+# For the rest of the rows, there's only going to be one bubble per avisit,
+# They are all regular alerts that don't cause AESI/DLT
+
+#########
+# Code  #
+#########
+
+fake_raw_patient_data <- readxl::read_xlsx("Book1.xlsx") %>%
+  # Turn all NA into ""
+  dplyr::mutate(dplyr::across(dplyr::everything(), function(x) {ifelse(is.na(x), "", x)})) %>%
+  # Pull levels from here to make colour palette
+  dplyr::mutate(body_part = factor(body_part,
+                                   c("Liver Functional Test", "Renal Functional Test", "Other Functional Test"),
+                                   c("Liver Functional Test", "Renal Functional Test", "Other Functional Test")))
+# adt funky, b/c Excel wants to turn everything into dates ;(
+
+# Give "timing" column, which is a factor of avisit or just numeric ady
+ady_data <- fake_raw_patient_data %>%
+  dplyr::mutate(timing = ady)
+
+avisit_data <- fake_raw_patient_data %>%
+  dplyr::mutate(timing = factor(avisit,
+                                c("Screening", "Week 1", "Week 3", "Week 5", "Week 7", "Week 9", "Week 11"),
+                                c("Screening", "Week 1", "Week 3", "Week 5", "Week 7", "Week 9", "Week 11")
+  ))

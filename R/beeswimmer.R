@@ -1,7 +1,7 @@
 #' @import htmlwidgets
 #'
 #' @export
-beeswimmer <- function(data, unique_alert_cat, width = NULL, height = NULL, elementId = NULL) {
+beeswimmer <- function(data, width = NULL, height = NULL, elementId = NULL) {
 
   # Determine if X is in AVISIT (is factor) or ADY (is dbl)
 
@@ -12,6 +12,8 @@ beeswimmer <- function(data, unique_alert_cat, width = NULL, height = NULL, elem
   } else {
     x_domain <- c(min(data$timing), max(data$timing))
   }
+
+  unique_alert_cat <- levels(data[["body_part"]])
 
   # forward options using x
   x = list(
