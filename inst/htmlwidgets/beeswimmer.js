@@ -11,9 +11,11 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function(x) {
-
-        let data = HTMLWidgets.dataframeToD3(x.dat)
-
+        // Apply dataframe transformation of each child dataframes
+        let data = Object.values(x.dat).map((childObject) => {
+          return HTMLWidgets.dataframeToD3(childObject);
+        });
+        
         this.svg = beeswarm(el.id, data, x.xIsAvisit, x.uniqAlertCat, x.xDomain, this.svg);
       },
 

@@ -1,7 +1,7 @@
 #' @import htmlwidgets
 #'
 #' @export
-beeswimmer <- function(data, width = NULL, height = NULL, elementId = NULL) {
+beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NULL, elementId = NULL) {
 
   # Determine if X is in AVISIT (is factor) or ADY (is dbl)
 
@@ -13,11 +13,28 @@ beeswimmer <- function(data, width = NULL, height = NULL, elementId = NULL) {
     x_domain <- c(min(data$timing), max(data$timing))
   }
 
-  unique_alert_cat <- levels(data[["body_part"]])
-
+  if (is.null(unique_alert_cat)) {
+    unique_alert_cat <- levels(data[["body_part"]])
+  }
+  
+  data <- data |>
+    # Bigger bubbles are plotted first
+    # This gets reset when hovering, due to z-index = 9999 css 
+    dplyr::arrange(rowid, timing, dplyr::desc(flag_score))|>
+    ## Whether the bubble is the biggest in its cluster
+    dplyr::group_by(rowid)|>
+    dplyr::mutate(
+      max_flag_score = max(flag_score),
+      is_max_flag_score = flag_score == max(flag_score)
+    )|>
+    dplyr::ungroup()
+  
+  # a list of dataframes, where each list is a specific alert event 
+  # In this group, there's at least 1 row (original event), plus more rows if it caused AESI or DLT
+  data_split <- split(data, data$rowid)
   # forward options using x
-  x = list(
-    dat = data,
+  x <- list(
+    dat = data_split,
     xDomain = x_domain,
     uniqAlertCat = unique_alert_cat,
     xIsAvisit = x_is_avisit
@@ -25,11 +42,11 @@ beeswimmer <- function(data, width = NULL, height = NULL, elementId = NULL) {
 
   # create widget
   htmlwidgets::createWidget(
-    name = 'beeswimmer',
+    name = "beeswimmer",
     x,
     width = width,
     height = height,
-    package = 'beeswimmer',
+    package = "beeswimmer",
     elementId = elementId
   )
 }
@@ -37,12 +54,12 @@ beeswimmer <- function(data, width = NULL, height = NULL, elementId = NULL) {
 
 #' @importFrom htmltools tags
 beeswimmer_html <- function(...) {
-  tags$div(
+  htmltools::tags$div(
     ...,
-    tags$div(class = "legend"),
-    tags$div(class = "wrapper"),
-    tags$div(class = "tooltip"),
-    tags$div(class = "xaxis")
+    htmltools::tags$div(class = "legend"),
+    htmltools::tags$div(class = "wrapper"),
+    htmltools::tags$div(class = "tooltip"),
+    htmltools::tags$div(class = "xaxis")
   )
 }
 

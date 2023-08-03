@@ -46,13 +46,22 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
 
       scales.xScale = xScale
 
+
+      const yScale = d3
+        .scaleLinear()
+        .domain([0, 1])
+        .range([scales.dimensions.boundedHeight, 0]);
+      scales.yScale = yScale
+
       return scales
 
     }
 
     const colorScale = d3.scaleOrdinal()
       .domain(uniqAlertCat)
-      .range(["#2e2585", "#7e2954", "#5da899", "#9f4a96", "#94cbec", "#c26a77", "#dccd7d"])
+      //.range(["#2e2585", "#7e2954", "#5da899", "#9f4a96", "#94cbec", "#c26a77", "#dccd7d"])
+      // brightness turned up to 70
+      .range(["#9088dd", "#da8bb3", "#9cc9c0", "#ce97c9", "#7dbfe8", "#d3929c", "#dfd286"])
 
     function createLegend(el, categories, colorScale) {
 
@@ -178,11 +187,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         );
 
 
-      const yScale = d3
-        .scaleLinear()
-        .domain([0, 1])
-        .range([scales.dimensions.boundedHeight, 0]);
-
+      
 
       // TODO
       // legend (remove the multiselect from the app, you're seeing it all, folks!)
@@ -212,31 +217,164 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
 
 
       // 5. Draw Data
-      const sim = d3.forceSimulation(data)
+
+      // Plotting the biggest circles first. Doing the collision detection on there,
+      // Then we'll plot down the smaller circles within the same cluster on top of the biggest circle
+
+      let biggestCircles = data.map(array => array.filter(obj => obj["is_max_flag_score"] === true))
+      biggestCircles = [].concat(...biggestCircles)
+
+      // Each bubble cluster gets a group
+      const circleClusters = bounds.append("g")
+        .attr("class", "circle-group")
+        .selectAll()
+        .data(biggestCircles)
+        .join("g")
+        .attr("class", "circle-cluster")
+      
+      const circles = circleClusters.selectAll()
+        .data((d) => Array(d))
+        .join("circle")
+        .attr("class", "biggest-circle")
+
+      // Sim to repel bubbles in same x value, but not overlap
+      d3.forceSimulation(biggestCircles) 
         .force("charge", d3.forceManyBody().strength(1))
-        .force("collide", d3.forceCollide().radius((d) => d.count * 7)) // 1 is padding
-        .force("x", d3.forceX().x((d) => scales.xScale(d.timing)))
-        .force("y", d3.forceY(yScale(0.5)))
+        .force("collide", d3.forceCollide().radius((d) => d.flag_score * 15))
+        .force("x", d3.forceX().x((d) => {
+          return scales.xScale(d.timing)
+        }))
+        .force("y", d3.forceY(scales.yScale(0.5)))
+        .on("tick", () => {
+          circles
+            .attr("cx", (d) => d.x)
+            .attr("cy", (d) => d.y)
+            .attr("r", (d) => d.flag_score * 15)
+            .attr("fill", (d) => {
+              let hsl = d3.hsl(colorScale(d.body_part))
+              // The more severe an event is, drop its lightness
+              let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - (d.flag_score * 0.2))
+              
+              return newColor.formatHex()
+            })
+            .on("mouseenter", onMouseEnter)
+            .on("mouseleave", onMouseLeave)
+        })
+      
 
-      const circles = bounds.append("g")
-        .attr("class", "circles")
-        .selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle")
-        .on("mouseenter", onMouseEnter)
-        .on("mouseleave", onMouseLeave)
+      // Inter-group force
 
-      sim.on("tick", () => {
-        circles
-          .attr("cx", (d) => d.x)
-          .attr("cy", (d) => d.y)
-          .attr("r", (d) => d.count * 7)
-          .attr("fill", (d) => colorScale(d.alert_cat))
-      })
+
+      // for (let i = 0; i < data.length; i++) {
+      //   const sim = d3.forceSimulation(data[i])
+      //     .force("charge", d3.forceManyBody().strength(1))
+      //     .force("collide", d3.forceCollide().radius(10))
+      //     .on("tick", () => {
+          
+      //       circleClusters
+      //         .selectAll("circle")
+      //         .enter()
+      //         .append("circle")
+      //         .attr("cx", (d) => {
+      //           return scales.xScale(0)
+      //         })
+      //         .attr("cy", (d) => scales.yScale(0.5))
+      //         .attr("r", (d) => 50)
+      //         .attr("fill", (d) => {
+      //           let hsl = d3.hsl(colorScale(d.body_part))
+      //           // The more severe an event is, drop its lightness
+      //           let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - (d.flag_score * 0.2))
+                
+      //           return newColor.formatHex()
+      //         })
+      //         .on("mouseenter", onMouseEnter)
+      //         .on("mouseleave", onMouseLeave)
+      //     })
+      // }
+        // sim.on("tick", () => {
+        //   //Plotting the biggest circles from each circle-clusters
+          
+        //   circleClusters
+        //     .selectAll("circle")
+        //     .enter()
+        //     .append("circle")
+        //     .attr("cx", (d) => {
+        //       return scales.xScale(0)
+        //     })
+        //     .attr("cy", (d) => scales.yScale(0.5))
+        //     .attr("r", (d) => 50)
+        //     .attr("fill", (d) => {
+        //       let hsl = d3.hsl(colorScale(d.body_part))
+        //       // The more severe an event is, drop its lightness
+        //       let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - (d.flag_score * 0.2))
+              
+        //       return newColor.formatHex()
+        //     })
+        //     .on("mouseenter", onMouseEnter)
+        //     .on("mouseleave", onMouseLeave)
+            
+        //   })
+
+
+
+     
+      // This is each circle cluster repelling each other
+      // const interClusterSim = d3.forceSimulation(data)
+      //   .force("collide", d3.forceCollide().radius((d) => {
+      //     return 1
+      //   }))
+
+      // const simulations = [];
+      // Loop through the array of objects and create a force simulation for each object
+      // circleClusters.each(function (d, i) {
+
+      //   const simulation = d3.forceSimulation(d)
+      //     .force('collide', d3.forceCollide().radius(1))
+      //     .on('tick', () => {
+
+      //       d3.select(this)
+      //         .selectAll('circle')
+      //         .attr('cx', (circle) => circle.x)
+      //         .attr('cy', (circle) => circle.y)
+      //         .attr("r", (d) => d.flag_score * 10)
+      //         .attr('fill', (circle) => {
+      //           return colorScale(circle.body_part)
+      //         });
+      //     });
+
+          // const simulation = d3.forceSimulation(node)
+          //   .force("charge", d3.forceManyBody().strength(1))
+          //   .force("collide", d3.forceCollide().radius((d) => {
+          //     return d.flag_score * 10
+          //   })) // 1 is padding
+          //   .force("x", d3.forceX().x((d) => {
+          //     return scales.xScale(d.timing)
+          //   }))
+          //   .force("y", d3.forceY(yScale(0.5)))
+          //   // Add other forces or configurations as needed for each simulation
+          //   .on('tick', () => {
+          //     circles
+          //       .attr("cx", (d) => {
+          //         return d.x
+          //       })
+          //       .attr("cy", (d) => d.y)
+          //       .attr("r", (d) => d.flag_score * 10)
+          //       .attr("fill", (d) => colorScale(d.alert_cat))
+          //   });
+          // simulations.push(simulation); // Store the simulation in the array
+      // });
+      // sim.on("tick", () => {
+      //   circles
+      //     .attr("cx", (d) => {
+      //       return d.x
+      //     })
+      //     .attr("cy", (d) => d.y)
+      //     .attr("r", (d) => d.flag_score * 10)
+      //     .attr("fill", (d) => colorScale(d.alert_cat))
+      // })
 
       const yAxisGenerator = d3.axisLeft()
-        .scale(yScale)
+        .scale(scales.yScale)
 
     // 7. Interactions
 
