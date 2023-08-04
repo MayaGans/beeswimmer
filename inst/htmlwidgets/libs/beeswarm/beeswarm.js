@@ -248,13 +248,23 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .force("charge", d3.forceManyBody().strength(1))
         .force("collide", d3.forceCollide().radius((d) => d.flag_score * 15))
         .force("x", d3.forceX().x((d) => {
+          console.log(d)
           return scales.xScale(d.timing)
         }))
         .force("y", d3.forceY(scales.yScale(0.5)))
         .on("tick", () => {
           bigCircles
-            .attr("cx", (d) => d.x)
-            .attr("cy", (d) => d.y)
+            .attr("cx", (d) => {
+
+              // if (d.rowid === 1 & d.x < 16) {
+              //   console.log(d.x)
+              // }
+              return d.x
+              // return 100
+            })
+            .attr("cy", (d) => {
+              return d.y
+            })
             .attr("r", (d) => d.flag_score * 15)
             .attr("fill", (d) => {
               let hsl = d3.hsl(colorScale(d.body_part))
@@ -267,7 +277,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
             .on("mouseleave", onMouseLeave)
         })
       
-
+      // No need to sim, because they'll be inside the biggest bubbles, which have already been sim'd
       const smallCircles = circleClusters.selectAll()
         .data((d) => {
           // data that goes behind it is an array of objects of smallerCirclesArr items.
@@ -275,117 +285,43 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         })
         .join("circle")
         .attr("class", "smaller-circle")
-        // console.log(smallCircles)
-      // Inter-group force
 
+      
+        // Waiting 1 sec for the sim to finish, then retrieving the biggest circles' x/y
+        // There's gotta be a better way
+      setTimeout(() => {
 
-      // for (let i = 0; i < data.length; i++) {
-      //   const sim = d3.forceSimulation(data[i])
-      //     .force("charge", d3.forceManyBody().strength(1))
-      //     .force("collide", d3.forceCollide().radius(10))
-      //     .on("tick", () => {
-          
-      //       circleClusters
-      //         .selectAll("circle")
-      //         .enter()
-      //         .append("circle")
-      //         .attr("cx", (d) => {
-      //           return scales.xScale(0)
-      //         })
-      //         .attr("cy", (d) => scales.yScale(0.5))
-      //         .attr("r", (d) => 50)
-      //         .attr("fill", (d) => {
-      //           let hsl = d3.hsl(colorScale(d.body_part))
-      //           // The more severe an event is, drop its lightness
-      //           let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - (d.flag_score * 0.2))
-                
-      //           return newColor.formatHex()
-      //         })
-      //         .on("mouseenter", onMouseEnter)
-      //         .on("mouseleave", onMouseLeave)
-      //     })
-      // }
-        // sim.on("tick", () => {
-        //   //Plotting the biggest circles from each circle-clusters
-          
-        //   circleClusters
-        //     .selectAll("circle")
-        //     .enter()
-        //     .append("circle")
-        //     .attr("cx", (d) => {
-        //       return scales.xScale(0)
-        //     })
-        //     .attr("cy", (d) => scales.yScale(0.5))
-        //     .attr("r", (d) => 50)
-        //     .attr("fill", (d) => {
-        //       let hsl = d3.hsl(colorScale(d.body_part))
-        //       // The more severe an event is, drop its lightness
-        //       let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - (d.flag_score * 0.2))
+        smallCircles
+          .attr("cx", (d) => {
+            // The "big circle" that the small circle belongs to
+            let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
+              .filter((arr) => arr.rowid === d.rowid)
               
-        //       return newColor.formatHex()
-        //     })
-        //     .on("mouseenter", onMouseEnter)
-        //     .on("mouseleave", onMouseLeave)
+            let bigCircleObject =  origBigCircle[0]
             
-        //   })
-
-
-
-     
-      // This is each circle cluster repelling each other
-      // const interClusterSim = d3.forceSimulation(data)
-      //   .force("collide", d3.forceCollide().radius((d) => {
-      //     return 1
-      //   }))
-
-      // const simulations = [];
-      // Loop through the array of objects and create a force simulation for each object
-      // circleClusters.each(function (d, i) {
-
-      //   const simulation = d3.forceSimulation(d)
-      //     .force('collide', d3.forceCollide().radius(1))
-      //     .on('tick', () => {
-
-      //       d3.select(this)
-      //         .selectAll('circle')
-      //         .attr('cx', (circle) => circle.x)
-      //         .attr('cy', (circle) => circle.y)
-      //         .attr("r", (d) => d.flag_score * 10)
-      //         .attr('fill', (circle) => {
-      //           return colorScale(circle.body_part)
-      //         });
-      //     });
-
-          // const simulation = d3.forceSimulation(node)
-          //   .force("charge", d3.forceManyBody().strength(1))
-          //   .force("collide", d3.forceCollide().radius((d) => {
-          //     return d.flag_score * 10
-          //   })) // 1 is padding
-          //   .force("x", d3.forceX().x((d) => {
-          //     return scales.xScale(d.timing)
-          //   }))
-          //   .force("y", d3.forceY(yScale(0.5)))
-          //   // Add other forces or configurations as needed for each simulation
-          //   .on('tick', () => {
-          //     circles
-          //       .attr("cx", (d) => {
-          //         return d.x
-          //       })
-          //       .attr("cy", (d) => d.y)
-          //       .attr("r", (d) => d.flag_score * 10)
-          //       .attr("fill", (d) => colorScale(d.alert_cat))
-          //   });
-          // simulations.push(simulation); // Store the simulation in the array
-      // });
-      // sim.on("tick", () => {
-      //   circles
-      //     .attr("cx", (d) => {
-      //       return d.x
-      //     })
-      //     .attr("cy", (d) => d.y)
-      //     .attr("r", (d) => d.flag_score * 10)
-      //     .attr("fill", (d) => colorScale(d.alert_cat))
-      // })
+            return bigCircleObject.x
+          })
+          .attr("cy", (d) => {
+            // The "big circle" that the small circle belongs to
+            let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
+              .filter((arr) => arr.rowid === d.rowid)
+              
+            let bigCircleObject =  origBigCircle[0]
+            // return scales.yScale(bigCircleObject.y)
+            return bigCircleObject.y
+          })
+          .attr("r", (d) => {
+            return d.flag_score * 15
+          })
+          .attr("fill", (d) => {
+            let hsl = d3.hsl(colorScale(d.body_part))
+            // The more severe an event is, drop its lightness
+            let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - ((d.flag_score-1) * 0.15))
+            
+            return newColor.formatHex()
+          })
+      }, 1000); 
+    
 
       const yAxisGenerator = d3.axisLeft()
         .scale(scales.yScale)
