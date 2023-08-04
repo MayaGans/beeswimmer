@@ -259,7 +259,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
             .attr("fill", (d) => {
               let hsl = d3.hsl(colorScale(d.body_part))
               // The more severe an event is, drop its lightness
-              let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - (d.flag_score * 0.2))
+              let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - ((d.flag_score-1) * 0.15))
               
               return newColor.formatHex()
             })
