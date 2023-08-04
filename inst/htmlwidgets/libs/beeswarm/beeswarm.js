@@ -221,24 +221,30 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       // Plotting the biggest circles first. Doing the collision detection on there,
       // Then we'll plot down the smaller circles within the same cluster on top of the biggest circle
 
-      let biggestCircles = data.map(array => array.filter(obj => obj["is_max_flag_score"] === true))
-      biggestCircles = [].concat(...biggestCircles)
+      const biggestCircles = data.map(array => array.filter(obj => obj["is_max_flag_score"] === true))
+      const biggestCirclesArr = [].concat(...biggestCircles)
 
+      const smallerCircles = data.map(array => array.filter(obj => obj["is_max_flag_score"] === false))
+      const smallerCirclesArr = []
+      for(let i=0; i < smallerCircles.length; i++) {
+        smallerCirclesArr[smallerCirclesArr.length] = smallerCircles[i]
+      }
+      
       // Each bubble cluster gets a group
       const circleClusters = bounds.append("g")
         .attr("class", "circle-group")
         .selectAll()
-        .data(biggestCircles)
+        .data(biggestCirclesArr)
         .join("g")
         .attr("class", "circle-cluster")
       
-      const circles = circleClusters.selectAll()
+      const bigCircles = circleClusters.selectAll()
         .data((d) => Array(d))
         .join("circle")
         .attr("class", "biggest-circle")
 
       // Sim to repel bubbles in same x value, but not overlap
-      d3.forceSimulation(biggestCircles) 
+      d3.forceSimulation(biggestCirclesArr) 
         .force("charge", d3.forceManyBody().strength(1))
         .force("collide", d3.forceCollide().radius((d) => d.flag_score * 15))
         .force("x", d3.forceX().x((d) => {
@@ -246,7 +252,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         }))
         .force("y", d3.forceY(scales.yScale(0.5)))
         .on("tick", () => {
-          circles
+          bigCircles
             .attr("cx", (d) => d.x)
             .attr("cy", (d) => d.y)
             .attr("r", (d) => d.flag_score * 15)
@@ -262,6 +268,14 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         })
       
 
+      const smallCircles = circleClusters.selectAll()
+        .data((d) => {
+          // data that goes behind it is an array of objects of smallerCirclesArr items.
+          return smallerCirclesArr.flat().filter(obj => obj.rowid === d.rowid)
+        })
+        .join("circle")
+        .attr("class", "smaller-circle")
+        // console.log(smallCircles)
       // Inter-group force
 
 
