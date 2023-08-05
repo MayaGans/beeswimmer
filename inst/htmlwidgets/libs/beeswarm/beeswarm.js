@@ -11,7 +11,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         width: window.innerWidth * 0.9,
         dimensions: {
           width: window.innerWidth * 0.9,
-          height: 75,
+          height: 150,
           margin: {
             top: 10,
             right: 40,
@@ -19,7 +19,8 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
             left: 40,
           },
           gridPatientWidth: 100
-        }
+        },
+        circleMultiplier: 10
       }
 
     scales.dimensions.boundedWidth =
@@ -246,7 +247,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       // Sim to repel bubbles in same x value, but not overlap
       d3.forceSimulation(biggestCirclesArr) 
         .force("charge", d3.forceManyBody().strength(1))
-        .force("collide", d3.forceCollide().radius((d) => d.flag_score * 15))
+        .force("collide", d3.forceCollide().radius((d) => d.flag_score * scales.circleMultiplier))
         .force("x", d3.forceX().x((d) => {
           console.log(d)
           return scales.xScale(d.timing)
@@ -265,7 +266,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
             .attr("cy", (d) => {
               return d.y
             })
-            .attr("r", (d) => d.flag_score * 15)
+            .attr("r", (d) => d.flag_score * scales.circleMultiplier)
             .attr("fill", (d) => {
               let hsl = d3.hsl(colorScale(d.body_part))
               // The more severe an event is, drop its lightness
@@ -307,11 +308,12 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
               .filter((arr) => arr.rowid === d.rowid)
               
             let bigCircleObject =  origBigCircle[0]
-            // return scales.yScale(bigCircleObject.y)
-            return bigCircleObject.y
+           
+            // From the center of the bigCircle, move it down by 15px as flag_score changes
+            return bigCircleObject.y + (d.max_flag_score - d.flag_score) * scales.circleMultiplier
           })
           .attr("r", (d) => {
-            return d.flag_score * 15
+            return d.flag_score * scales.circleMultiplier
           })
           .attr("fill", (d) => {
             let hsl = d3.hsl(colorScale(d.body_part))
@@ -320,6 +322,8 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
             
             return newColor.formatHex()
           })
+          .on("mouseenter", onMouseEnter)
+          .on("mouseleave", onMouseLeave)
       }, 1000); 
     
 
@@ -414,7 +418,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .style("stroke-width", 5)
         .attr("stroke", (d) => colorScale(d.alert_cat))
         .attr('z-index', 99999)
-        .moveToFront();
+        //.moveToFront();
     }
 
     function onMouseLeave() {
@@ -422,6 +426,9 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
 
       d3.select(this)
         .style("stroke-width", "0")
+        // Send back to its original position
+        //.attr('z-index', 99999)
+        //.moveToFront();
     }
 
     function onMouseEnterLastCollected(e, datum) {
