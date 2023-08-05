@@ -1,4 +1,5 @@
 #' @import htmlwidgets
+#' @importFrom dplyr %>%
 #'
 #' @export
 beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NULL, elementId = NULL) {
@@ -17,16 +18,16 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
     unique_alert_cat <- levels(data[["body_part"]])
   }
   
-  data <- data |>
+  data <- data %>%
     # Bigger bubbles are plotted first
     # This gets reset when hovering, due to z-index = 9999 css 
-    dplyr::arrange(rowid, timing, dplyr::desc(flag_score))|>
+    dplyr::arrange(rowid, timing, dplyr::desc(flag_score)) %>%
     ## Whether the bubble is the biggest in its cluster
-    dplyr::group_by(rowid)|>
+    dplyr::group_by(rowid) %>%
     dplyr::mutate(
       max_flag_score = max(flag_score),
       is_max_flag_score = flag_score == max(flag_score)
-    )|>
+    ) %>%
     dplyr::ungroup()
   
   # a list of dataframes, where each list is a specific alert event 
