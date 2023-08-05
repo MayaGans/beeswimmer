@@ -20,7 +20,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
           },
           gridPatientWidth: 100
         },
-        circleMultiplier: 10
+        circleMultiplier: 12
       }
 
     scales.dimensions.boundedWidth =
