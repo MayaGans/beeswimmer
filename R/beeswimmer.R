@@ -32,8 +32,9 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
   
   # a list of dataframes, where each list is a specific alert event 
   # In this group, there's at least 1 row (original event), plus more rows if it caused AESI or DLT
-  data_split <- split(data, data$rowid)
-  # forward options using x
+  data_split <- lapply(split(data, data$subjid), function(x) {split(x, x$rowid)})
+  # data_split <- split(data, data$rowid)
+    # forward options using x
   x <- list(
     dat = data_split,
     xDomain = x_domain,

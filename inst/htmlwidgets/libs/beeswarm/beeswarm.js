@@ -57,7 +57,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       return scales
 
     }
-
+    
     const colorScale = d3.scaleOrdinal()
       .domain(uniqAlertCat)
       //.range(["#2e2585", "#7e2954", "#5da899", "#9f4a96", "#94cbec", "#c26a77", "#dccd7d"])
@@ -480,8 +480,6 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
     }
   }
 
-    const uniquePatient = [...new Set(d3.map(data, d => d.patient))]
-
     const importantAvisits = ["Screening", "Baseline"]
 
     if (currSvg !== null) {
@@ -491,21 +489,20 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       document.getElementById(el).querySelector(".xaxis").innerHTML = null
     }
 
-    for (let i = 0; i < uniquePatient.length; i++) {
+    for (let i = 0; i < data.patientData.length; i++) {
 
-      const realDataPatient = data.filter(d => d.patient === uniquePatient[i])
-
-      const last_collected = [...new Set(d3.map(data, d => d.last_collected))][0]
+      // const last_collected = [...new Set(d3.map(data, d => d.last_collected))][0]
 
       bubbleChart(
          el,
-         realDataPatient,
-         uniquePatient[i],
+         data.patientData[i],
+         data.patientId[i],
          xDomain,
          uniqAlertCat,
          xIsAvisit,
          colorScale,
-         last_collected
+         1 //last_collected
+        //  last_collected
       )
     }
 

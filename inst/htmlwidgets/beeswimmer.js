@@ -12,11 +12,22 @@ HTMLWidgets.widget({
 
       renderValue: function(x) {
         // Apply dataframe transformation of each child dataframes
-        let data = Object.values(x.dat).map((childObject) => {
-          return HTMLWidgets.dataframeToD3(childObject);
-        });
-        
-        this.svg = beeswarm(el.id, data, x.xIsAvisit, x.uniqAlertCat, x.xDomain, this.svg);
+        let data = Object.values(x.dat).map((obj) => {
+          return(
+              Object.values(obj).map((childObject) => {
+                  return(HTMLWidgets.dataframeToD3(childObject))
+              })
+          )
+        })
+
+        let names = Object.keys(x.dat)
+
+        let outData = {
+          patientId: names,
+          patientData: data
+        }
+
+        this.svg = beeswarm(el.id, outData, x.xIsAvisit, x.uniqAlertCat, x.xDomain, this.svg);
       },
 
       resize: function(width, height) {
