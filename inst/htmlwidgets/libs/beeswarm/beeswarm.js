@@ -244,8 +244,16 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .join("circle")
         .attr("class", "biggest-circle")
 
+      const smallCircles = circleClusters.selectAll()
+        .data((d) => {
+          // data that goes behind it is an array of objects of smallerCirclesArr items.
+          return smallerCirclesArr.flat().filter(obj => obj.rowid === d.rowid)
+        })
+        .join("circle")
+        .attr("class", "smaller-circle")
+
       // Sim to repel bubbles in same x value, but not overlap
-      d3.forceSimulation(biggestCirclesArr) 
+      const sim = d3.forceSimulation(biggestCirclesArr) 
         .force("charge", d3.forceManyBody().strength(1))
         .force("collide", d3.forceCollide().radius((d) => d.flag_score * scales.circleMultiplier))
         .force("x", d3.forceX().x((d) => {
@@ -253,19 +261,11 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
           return scales.xScale(d.timing)
         }))
         .force("y", d3.forceY(scales.yScale(0.5)))
-        .on("end", () => {
-          bigCircles
-            .attr("cx", (d) => {
+        .on("tick", () => {
 
-              // if (d.rowid === 1 & d.x < 16) {
-              //   console.log(d.x)
-              // }
-              return d.x
-              // return 100
-            })
-            .attr("cy", (d) => {
-              return d.y
-            })
+          bigCircles
+            .attr("cx", (d) => d.x)
+            .attr("cy", (d) => d.y)
             .attr("r", (d) => d.flag_score * scales.circleMultiplier)
             .attr("fill", (d) => {
               let hsl = d3.hsl(colorScale(d.body_part))
@@ -274,17 +274,13 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
               
               return newColor.formatHex()
             })
+            // slowly light up as sim settles
+            .style("opacity", 1/sim.alpha())
             .on("mouseenter", onMouseEnter)
             .on("mouseleave", onMouseLeave)
 
-           // No need to sim, because they'll be inside the biggest bubbles, which have already been sim'd
-          const smallCircles = circleClusters.selectAll()
-            .data((d) => {
-              // data that goes behind it is an array of objects of smallerCirclesArr items.
-              return smallerCirclesArr.flat().filter(obj => obj.rowid === d.rowid)
-            })
-            .join("circle")
-            .attr("class", "smaller-circle")
+
+          smallCircles
             .attr("cx", (d) => {
               // The "big circle" that the small circle belongs to
               let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
@@ -314,9 +310,10 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
               
               return newColor.formatHex()
             })
+            .style("opacity", 1/sim.alpha())
             .on("mouseenter", onMouseEnter)
-            .on("mouseleave", onMouseLeave)
-          })   
+            .on("mouseleave", onMouseLeave)   
+        })
 
       const yAxisGenerator = d3.axisLeft()
         .scale(scales.yScale)
