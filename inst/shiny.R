@@ -8,10 +8,10 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   output$plot <- beeswimmer::renderBeeswimmer({
     beeswimmer::beeswimmer(
-      beeswimmer::ady_data_plot|>
+      beeswimmer::ady_data|>
         rbind(
-          beeswimmer::ady_data_plot |>
-            dplyr::mutate(subjid = "Patient 2")
+          beeswimmer::ady_data |>
+            dplyr::mutate(patient = "Patient 2")
         ) |>
         dplyr::select(-c(dplyr::starts_with("crit")))
         # dplyr::filter(rowid %in% c(1))
@@ -20,4 +20,3 @@ server <- function(input, output, session) {
 }   
 
 shinyApp(ui, server)
-

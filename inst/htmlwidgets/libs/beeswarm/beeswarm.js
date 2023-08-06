@@ -253,7 +253,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
           return scales.xScale(d.timing)
         }))
         .force("y", d3.forceY(scales.yScale(0.5)))
-        .on("tick", () => {
+        .on("end", () => {
           bigCircles
             .attr("cx", (d) => {
 
@@ -276,56 +276,47 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
             })
             .on("mouseenter", onMouseEnter)
             .on("mouseleave", onMouseLeave)
-        })
-      
-      // No need to sim, because they'll be inside the biggest bubbles, which have already been sim'd
-      const smallCircles = circleClusters.selectAll()
-        .data((d) => {
-          // data that goes behind it is an array of objects of smallerCirclesArr items.
-          return smallerCirclesArr.flat().filter(obj => obj.rowid === d.rowid)
-        })
-        .join("circle")
-        .attr("class", "smaller-circle")
 
-      
-        // Waiting 1 sec for the sim to finish, then retrieving the biggest circles' x/y
-        // There's gotta be a better way
-      setTimeout(() => {
-
-        smallCircles
-          .attr("cx", (d) => {
-            // The "big circle" that the small circle belongs to
-            let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
-              .filter((arr) => arr.rowid === d.rowid)
+           // No need to sim, because they'll be inside the biggest bubbles, which have already been sim'd
+          const smallCircles = circleClusters.selectAll()
+            .data((d) => {
+              // data that goes behind it is an array of objects of smallerCirclesArr items.
+              return smallerCirclesArr.flat().filter(obj => obj.rowid === d.rowid)
+            })
+            .join("circle")
+            .attr("class", "smaller-circle")
+            .attr("cx", (d) => {
+              // The "big circle" that the small circle belongs to
+              let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
+                .filter((arr) => arr.rowid === d.rowid)
+                
+              let bigCircleObject =  origBigCircle[0]
               
-            let bigCircleObject =  origBigCircle[0]
+              return bigCircleObject.x
+            })
+            .attr("cy", (d) => {
+              // The "big circle" that the small circle belongs to
+              let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
+                .filter((arr) => arr.rowid === d.rowid)
+                
+              let bigCircleObject =  origBigCircle[0]
             
-            return bigCircleObject.x
-          })
-          .attr("cy", (d) => {
-            // The "big circle" that the small circle belongs to
-            let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
-              .filter((arr) => arr.rowid === d.rowid)
+              // From the center of the bigCircle, move it down by 15px as flag_score changes
+              return bigCircleObject.y + (d.max_flag_score - d.flag_score) * scales.circleMultiplier
+            })
+            .attr("r", (d) => {
+              return d.flag_score * scales.circleMultiplier
+            })
+            .attr("fill", (d) => {
+              let hsl = d3.hsl(colorScale(d.body_part))
+              // The more severe an event is, drop its lightness
+              let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - ((d.flag_score-1) * 0.15))
               
-            let bigCircleObject =  origBigCircle[0]
-           
-            // From the center of the bigCircle, move it down by 15px as flag_score changes
-            return bigCircleObject.y + (d.max_flag_score - d.flag_score) * scales.circleMultiplier
-          })
-          .attr("r", (d) => {
-            return d.flag_score * scales.circleMultiplier
-          })
-          .attr("fill", (d) => {
-            let hsl = d3.hsl(colorScale(d.body_part))
-            // The more severe an event is, drop its lightness
-            let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - ((d.flag_score-1) * 0.15))
-            
-            return newColor.formatHex()
-          })
-          .on("mouseenter", onMouseEnter)
-          .on("mouseleave", onMouseLeave)
-      }, 1000); 
-    
+              return newColor.formatHex()
+            })
+            .on("mouseenter", onMouseEnter)
+            .on("mouseleave", onMouseLeave)
+          })   
 
       const yAxisGenerator = d3.axisLeft()
         .scale(scales.yScale)
