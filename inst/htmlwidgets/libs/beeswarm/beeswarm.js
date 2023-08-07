@@ -329,8 +329,6 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
     const xAxis = d3.select(`#${el} .xaxis`)
 
     function onMouseEnter(e, datum) {
-      console.log("----- HOVERED -----")
-      console.log(datum)
       let bottomOverflow = false
       let rightOverflow = false
       // Place the tooltip!
