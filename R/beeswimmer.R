@@ -17,7 +17,7 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
   if (is.null(unique_alert_cat)) {
     unique_alert_cat <- levels(data[["body_part"]])
   }
-
+print(unique_alert_cat)
   data <- data %>%
     # Bigger bubbles are plotted first
     # This gets reset when hovering, due to z-index = 9999 css
