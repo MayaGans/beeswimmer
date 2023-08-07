@@ -15,7 +15,7 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
   }
 
   if (is.null(unique_alert_cat)) {
-    unique_alert_cat <- levels(data[["body_part"]])
+    unique_alert_cat <- c(levels(data[["body_part"]]))
   }
 print(unique_alert_cat)
   data <- data %>%
