@@ -16,6 +16,10 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
 
   if (is.null(unique_alert_cat)) {
     unique_alert_cat <- levels(data[["body_part"]])
+
+    if (!"Other Functional Test" %in% unique_alert_cat) {
+      unique_alert_cat <- c(unique_alert_cat, "Other Functional Test")
+    }
   }
   
   data <- data %>%
@@ -29,6 +33,8 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
       is_max_flag_score = flag_score == max(flag_score)
     ) %>%
     dplyr::ungroup()
+
+    
 
   # a list of dataframes, where each list is a specific alert event
   # In this group, there's at least 1 row (original event), plus more rows if it caused AESI or DLT
