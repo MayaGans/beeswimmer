@@ -62,6 +62,7 @@ beeswimmer_html <- function(...) {
     htmltools::tags$div(class = "legend"),
     htmltools::tags$div(class = "wrapper"),
     htmltools::tags$div(class = "tooltip"),
+    htmltools::tags$div(class = "line-tooltip"),
     htmltools::tags$div(class = "xaxis")
   )
 }

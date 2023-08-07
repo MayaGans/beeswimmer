@@ -326,6 +326,8 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
     const tooltip = d3.select(`#${el} .tooltip`)
     const wrapper = document.querySelector(`#${el} .wrapper`)
     const wrapperBoundBox = wrapper.getBoundingClientRect();
+    // The width of the area of the .wrapper that the user sees (area that tooltip is allowed to be in)
+    const viewAbleWrapperWidth = Math.min(window.innerWidth, wrapperBoundBox.width)
     const xAxis = d3.select(`#${el} .xaxis`)
 
     function onMouseEnter(e, datum) {
@@ -336,7 +338,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       // If tooltip overflows from the wrapper to the right, then its top right corner will be placed on the point
       // If tooltip overflows from the wrapper to the bottom, then its bottom left corner will be placed on the point
 
-      const boundBox = this.getBoundingClientRect();
+      let boundBox = this.getBoundingClientRect();
 
 
       //----------------------------
@@ -362,9 +364,6 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       // The x position that tooltip goes to (from left)
       const tooltipWidth = parseFloat(tooltip.style("width"))
       const tooltipWidthX = e.pageX + tooltipWidth;
-
-      // The width of the area of the .wrapper that the user sees (area that tooltip is allowed to be in)
-      const viewAbleWrapperWidth = Math.min(window.innerWidth, wrapperBoundBox.width)
 
       // tooltip overflows to the right
       if (tooltipWidthX > viewAbleWrapperWidth) {
@@ -420,37 +419,40 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         //.moveToFront();
     }
 
+
+
+    //--------------------
+    // Line tooltip placement
+    //--------------------
+    const lineTooltip = d3.select(`#${el} .line-tooltip`)
     function onMouseEnterLastCollected(e, datum) {
 
-      const boundBox = this.getBoundingClientRect();
+      const lineTooltipBoundBox = this.getBoundingClientRect();
 
       // Place the tooltip in the center of the line, unless it overflows to
       // left or right, then put them to the right/left of the line.
-      const lineCenterX = (boundBox.left + boundBox.right) / 2
-      const lineCenterY = (boundBox.top + boundBox.bottom) / 2
+      const lineCenterX = (lineTooltipBoundBox.left + lineTooltipBoundBox.right) / 2 + window.scrollX
+      const lineCenterY = (lineTooltipBoundBox.top + lineTooltipBoundBox.bottom) / 2 + window.scrollY
 
       let lastCollectedTooltipHTML = `
         <div class="last-collected-tooltip"><b>Last Collected:</b> ${datum[0].last_collected}</div>
       `
 
       // The x position that tooltip goes to (from left)
-      const tooltipWidth = parseFloat(tooltip.style("width"))
-      const tooltipWidthX = e.pageX + tooltipWidth;
-
-      // The width of the area of the .wrapper that the user sees (area that tooltip is allowed to be in)
-      const viewAbleWrapperWidth = Math.min(window.innerWidth, wrapperBoundBox.width)
+      const lineTooltipWidth = parseFloat(lineTooltip.style("width"))
+      const lineTooltipWidthX = e.pageX + lineTooltipWidth;
 
       let lineTooltipOffset
 
-      if (tooltipWidthX > viewAbleWrapperWidth) {
+      if (lineTooltipWidthX > viewAbleWrapperWidth) {
         // Right overflow, tooltip goes to the left of the line
         lineTooltipOffset = -100
       } else {
         // All the rest, tooltip goes to the right of the line
         lineTooltipOffset = 0
       }
-
-      tooltip
+      
+      lineTooltip
         .style("left", lineCenterX + "px")
         .style("top", lineCenterY + "px")
         .style("opacity", 1)
@@ -459,10 +461,12 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
 
       d3.select(this)
         .style("stroke-width", 5)
+        .attr('z-index', 99999)
+        .style("max-width", 200)
     }
 
     function onMouseLeaveLastCollected() {
-      tooltip.style("opacity", 0)
+      lineTooltip.style("opacity", 0)
 
       d3.select(this)
         .style("stroke-width", "1")
