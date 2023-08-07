@@ -378,9 +378,10 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       let tooltipX
       let tooltipY
 
-      const circleCenterX = (boundBox.left + boundBox.right) / 2
-      const circleCenterY = (boundBox.top + boundBox.bottom) / 2
+      const circleCenterX = (boundBox.left + boundBox.right) / 2 + window.scrollX
+      const circleCenterY = (boundBox.top + boundBox.bottom) / 2 + window.scrollY
 
+      // We have to think about top overflow too... The top row's tooltip may overflow to the top
       if (bottomOverflow & rightOverflow) {
         tooltipX = circleCenterX - tooltipWidth
         tooltipY = circleCenterY - tooltipHeight
