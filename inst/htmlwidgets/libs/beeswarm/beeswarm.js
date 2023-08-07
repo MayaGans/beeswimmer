@@ -6,6 +6,7 @@ d3.selection.prototype.moveToFront = function() {
 
 
 function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
+  
   function createScales(xIsAvisit, xDomain) {
       let scales = {
         width: window.innerWidth * 0.9,
@@ -257,7 +258,6 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .force("charge", d3.forceManyBody().strength(1))
         .force("collide", d3.forceCollide().radius((d) => d.flag_score * scales.circleMultiplier))
         .force("x", d3.forceX().x((d) => {
-          console.log(d)
           return scales.xScale(d.timing)
         }))
         .force("y", d3.forceY(scales.yScale(0.5)))
