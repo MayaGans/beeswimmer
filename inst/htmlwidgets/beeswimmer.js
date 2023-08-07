@@ -27,7 +27,14 @@ HTMLWidgets.widget({
           patientData: data
         }
 
-        this.svg = beeswarm(el.id, outData, x.xIsAvisit, x.uniqAlertCat, x.xDomain, this.svg);
+        // Make sure uniqAlertCat is an array when there's only 1 item
+        let uniqAlertCat = x.uniqAlertCat
+
+        if (!Array.isArray(uniqAlertCat)) {
+          uniqAlertCat = [uniqAlertCat]
+        } 
+        
+        this.svg = beeswarm(el.id, outData, x.xIsAvisit, uniqAlertCat, x.xDomain, this.svg);
       },
 
       resize: function(width, height) {

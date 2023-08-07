@@ -66,8 +66,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       .range(["#9088dd", "#da8bb3", "#9cc9c0", "#ce97c9", "#7dbfe8", "#d3929c", "#dfd286"])
 
     function createLegend(el, categories, colorScale) {
-      console.log("after c")
-console.log(categories)
+
       const legend = d3
         .select(`#${el} .legend`)
         .selectAll("div")
