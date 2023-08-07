@@ -17,10 +17,10 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
   if (is.null(unique_alert_cat)) {
     unique_alert_cat <- levels(data[["body_part"]])
   }
-  
+
   data <- data %>%
     # Bigger bubbles are plotted first
-    # This gets reset when hovering, due to z-index = 9999 css 
+    # This gets reset when hovering, due to z-index = 9999 css
     dplyr::arrange(rowid, timing, dplyr::desc(flag_score)) %>%
     ## Whether the bubble is the biggest in its cluster
     dplyr::group_by(rowid) %>%
@@ -29,12 +29,13 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
       is_max_flag_score = flag_score == max(flag_score)
     ) %>%
     dplyr::ungroup()
-  
-  # a list of dataframes, where each list is a specific alert event 
+
+  # a list of dataframes, where each list is a specific alert event
   # In this group, there's at least 1 row (original event), plus more rows if it caused AESI or DLT
   data_split <- lapply(split(data, data$patient), function(x) {split(x, x$rowid)})
   # data_split <- split(data, data$rowid)
     # forward options using x
+
   x <- list(
     dat = data_split,
     xDomain = x_domain,

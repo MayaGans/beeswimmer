@@ -6,7 +6,7 @@ d3.selection.prototype.moveToFront = function() {
 
 
 function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
-  
+
   function createScales(xIsAvisit, xDomain) {
       let scales = {
         width: window.innerWidth * 0.9,
@@ -58,7 +58,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       return scales
 
     }
-    
+
     const colorScale = d3.scaleOrdinal()
       .domain(uniqAlertCat)
       //.range(["#2e2585", "#7e2954", "#5da899", "#9f4a96", "#94cbec", "#c26a77", "#dccd7d"])
@@ -155,7 +155,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         */
     }
 
-    function bubbleChart(el, data, patient, xDomain, uniqueAlertCat, xIsAvisit, colorScale, last_collected) {
+    function bubbleChart(el, data, patient, xDomain, uniqueAlertCat, xIsAvisit, colorScale) {
 
       let scales = createScales(xIsAvisit, xDomain)
 
@@ -189,7 +189,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         );
 
 
-      
+
 
       // TODO
       // legend (remove the multiselect from the app, you're seeing it all, folks!)
@@ -207,9 +207,9 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .data(data)
         .enter()
         .append("line")
-        .attr('x1', d => scales.xScale(d.last_collected))
+        .attr('x1', d => scales.xScale(d[0].last_collected))
         .attr('y1', scales.dimensions.height)
-        .attr('x2', d => scales.xScale(d.last_collected))
+        .attr('x2', d => scales.xScale(d[0].last_collected))
         .attr('y2', -10)
         .style("stroke-width", 1)
         .style("stroke", "#ABABAB")
@@ -231,7 +231,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       for(let i=0; i < smallerCircles.length; i++) {
         smallerCirclesArr[smallerCirclesArr.length] = smallerCircles[i]
       }
-      
+
       // Each bubble cluster gets a group
       const circleClusters = bounds.append("g")
         .attr("class", "circle-group")
@@ -239,7 +239,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .data(biggestCirclesArr)
         .join("g")
         .attr("class", "circle-cluster")
-      
+
       const bigCircles = circleClusters.selectAll()
         .data((d) => Array(d))
         .join("circle")
@@ -254,7 +254,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
         .attr("class", "smaller-circle")
 
       // Sim to repel bubbles in same x value, but not overlap
-      const sim = d3.forceSimulation(biggestCirclesArr) 
+      const sim = d3.forceSimulation(biggestCirclesArr)
         .force("charge", d3.forceManyBody().strength(1))
         .force("collide", d3.forceCollide().radius((d) => d.flag_score * scales.circleMultiplier))
         .force("x", d3.forceX().x((d) => {
@@ -271,7 +271,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
               let hsl = d3.hsl(colorScale(d.body_part))
               // The more severe an event is, drop its lightness
               let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - ((d.flag_score-1) * 0.15))
-              
+
               return newColor.formatHex()
             })
             // slowly light up as sim settles
@@ -285,18 +285,18 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
               // The "big circle" that the small circle belongs to
               let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
                 .filter((arr) => arr.rowid === d.rowid)
-                
+
               let bigCircleObject =  origBigCircle[0]
-              
+
               return bigCircleObject.x
             })
             .attr("cy", (d) => {
               // The "big circle" that the small circle belongs to
               let origBigCircle = bigCircles._groups.flat().map(arr => arr.__data__)
                 .filter((arr) => arr.rowid === d.rowid)
-                
+
               let bigCircleObject =  origBigCircle[0]
-            
+
               // From the center of the bigCircle, move it down by 15px as flag_score changes
               return bigCircleObject.y + (d.max_flag_score - d.flag_score) * scales.circleMultiplier
             })
@@ -307,12 +307,12 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
               let hsl = d3.hsl(colorScale(d.body_part))
               // The more severe an event is, drop its lightness
               let newColor = d3.hsl(hsl.h, hsl.s, hsl.l - ((d.flag_score-1) * 0.15))
-              
+
               return newColor.formatHex()
             })
             .style("opacity", 1/sim.alpha())
             .on("mouseenter", onMouseEnter)
-            .on("mouseleave", onMouseLeave)   
+            .on("mouseleave", onMouseLeave)
         })
 
       const yAxisGenerator = d3.axisLeft()
@@ -430,7 +430,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       const lineCenterY = (boundBox.top + boundBox.bottom) / 2
 
       let lastCollectedTooltipHTML = `
-        <div class="last-collected-tooltip"><b>Last Collected:</b> ${datum.last_collected}</div>
+        <div class="last-collected-tooltip"><b>Last Collected:</b> ${datum[0].last_collected}</div>
       `
 
       // The x position that tooltip goes to (from left)
@@ -489,8 +489,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
          xDomain,
          uniqAlertCat,
          xIsAvisit,
-         colorScale,
-         1 //last_collected
+         colorScale
         //  last_collected
       )
     }
