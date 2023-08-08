@@ -201,15 +201,18 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       // OR redraw the force
 
       // Last Collected queue (black vertical line)
+      const lastCollectedData = data.map(arr => arr[0]).slice(0, 1)
+      
       const lastCollected = bounds.append("g")
         .attr("class", "last-collected-queue")
         .selectAll("line")
-        .data(data)
+        // just the first object (need only 1 line)
+        .data(lastCollectedData)
         .enter()
         .append("line")
-        .attr('x1', d => scales.xScale(d[0].last_collected))
+        .attr('x1', d => scales.xScale(d.last_collected))
         .attr('y1', scales.dimensions.height)
-        .attr('x2', d => scales.xScale(d[0].last_collected))
+        .attr('x2', d => scales.xScale(d.last_collected))
         .attr('y2', -10)
         .style("stroke-width", 1)
         .style("stroke", "#ABABAB")
@@ -435,7 +438,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       const lineCenterY = (lineTooltipBoundBox.top + lineTooltipBoundBox.bottom) / 2 + window.scrollY
 
       let lastCollectedTooltipHTML = `
-        <div class="last-collected-tooltip"><b>Last Collected:</b> ${datum[0].last_collected}</div>
+        <div class="last-collected-tooltip"><b>Last Collected:</b> ${datum.last_collected}</div>
       `
 
       // The x position that tooltip goes to (from left)
