@@ -160,7 +160,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       let scales = createScales(xIsAvisit, xDomain)
 
       const lane = d3
-        .select(`#${el} .wrapper`)
+        .select(`#${el} .beeswimmer-wrapper`)
         .append("div")
         .attr("class", "patient-lane")
 
@@ -327,7 +327,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
     // Circle tooltip
     //-----------------
     const tooltip = d3.select(`#${el} .tooltip`)
-    const wrapper = document.querySelector(`#${el} .wrapper`)
+    const wrapper = document.querySelector(`#${el} .beeswimmer-wrapper`)
     const wrapperBoundBox = wrapper.getBoundingClientRect();
     // The width of the area of the .wrapper that the user sees (area that tooltip is allowed to be in)
     const viewAbleWrapperWidth = Math.min(window.innerWidth, wrapperBoundBox.width)
@@ -480,7 +480,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
 
     if (currSvg !== null) {
       document.getElementById(el).querySelector(".legend").innerHTML = null
-      document.getElementById(el).querySelector(".wrapper").innerHTML = null
+      document.getElementById(el).querySelector(".beeswimmer-wrapper").innerHTML = null
       document.getElementById(el).querySelector(".tooltip").innerHTML = null
       document.getElementById(el).querySelector(".xaxis").innerHTML = null
     }

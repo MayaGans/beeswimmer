@@ -2,10 +2,6 @@ body {
     margin: 0
 }
 
-#wrapper {
-    position: relative;
-}
-
 .patient-lane {
     display: grid;
     grid-template-columns: 100px 1fr;
