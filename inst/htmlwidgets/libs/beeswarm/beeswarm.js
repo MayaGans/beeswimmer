@@ -5,7 +5,7 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 
-function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
+function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallView) {
 
   function createScales(xIsAvisit, xDomain) {
       let scales = {
@@ -485,20 +485,34 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg) {
       document.getElementById(el).querySelector(".xaxis").innerHTML = null
     }
 
-    for (let i = 0; i < data.patientData.length; i++) {
-
-      // const last_collected = [...new Set(d3.map(data, d => d.last_collected))][0]
+    console.log(overallView)
+    if (overallView) {
+      const overallData = [].concat.apply([], data.patientData)
 
       bubbleChart(
-         el,
-         data.patientData[i],
-         data.patientId[i],
-         xDomain,
-         uniqAlertCat,
-         xIsAvisit,
-         colorScale
-        //  last_collected
-      )
+        el,
+        overallData,
+        "Overall",
+        xDomain,
+        uniqAlertCat,
+        xIsAvisit,
+        colorScale,
+        overallView
+     )
+     
+    } else {
+      for (let i = 0; i < data.patientData.length; i++) {
+        bubbleChart(
+           el,
+           data.patientData[i],
+           data.patientId[i],
+           xDomain,
+           uniqAlertCat,
+           xIsAvisit,
+           colorScale,
+           overallView
+        )
+      }
     }
 
     createLegend(el, uniqAlertCat, colorScale)

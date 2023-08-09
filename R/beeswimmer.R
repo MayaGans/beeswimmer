@@ -2,7 +2,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NULL, elementId = NULL) {
+beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, width = NULL, height = NULL, elementId = NULL) {
 
   # Determine if X is in AVISIT (is factor) or ADY (is dbl)
 
@@ -46,7 +46,8 @@ beeswimmer <- function(data, unique_alert_cat = NULL, width = NULL, height = NUL
     dat = data_split,
     xDomain = x_domain,
     uniqAlertCat = unique_alert_cat,
-    xIsAvisit = x_is_avisit
+    xIsAvisit = x_is_avisit,
+    overallView = overall_view
   )
 
   # create widget

@@ -34,7 +34,7 @@ HTMLWidgets.widget({
           uniqAlertCat = [uniqAlertCat]
         } 
         
-        this.svg = beeswarm(el.id, outData, x.xIsAvisit, uniqAlertCat, x.xDomain, this.svg);
+        this.svg = beeswarm(el.id, outData, x.xIsAvisit, uniqAlertCat, x.xDomain, this.svg, x.overallView);
       },
 
       resize: function(width, height) {
