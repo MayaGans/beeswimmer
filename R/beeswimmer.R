@@ -16,10 +16,6 @@ beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, widt
 
   if (is.null(unique_alert_cat)) {
     unique_alert_cat <- levels(data[["body_part"]])
-
-    if (!"Other Functional Test" %in% unique_alert_cat) {
-      unique_alert_cat <- c(unique_alert_cat, "Other Functional Test")
-    }
   }
   
   data <- data %>%
