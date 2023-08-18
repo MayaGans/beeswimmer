@@ -201,11 +201,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallVi
       // OR redraw the force
 
       // Last Collected queue (black vertical line)
-      console.log("data")
-      console.log(data)
       const lastCollectedData = data.map(arr => arr[0]).slice(0, 1)
-      console.log("lastCollectedData")
-      console.log(lastCollectedData)
       
       const lastCollected = bounds.append("g")
         .attr("class", "last-collected-queue")
