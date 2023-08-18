@@ -11,7 +11,6 @@ beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, widt
   if (x_is_avisit) {
     x_domain <- levels(data$timing)
   } else {
-    browser()
     # Make sure last_collected is part of the x scale, if it is larger than the bubbles' x
     # Throwing it in min also, JUST in case
     last_collected  <- unique(data$last_collected)
