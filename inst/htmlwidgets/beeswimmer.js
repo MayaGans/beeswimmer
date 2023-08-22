@@ -11,10 +11,30 @@ HTMLWidgets.widget({
     return {
 
       renderValue: function(x) {
+        // Apply dataframe transformation of each child dataframes
+        let data = Object.values(x.dat).map((obj) => {
+          return(
+              Object.values(obj).map((childObject) => {
+                  return(HTMLWidgets.dataframeToD3(childObject))
+              })
+          )
+        })
 
-        let data = HTMLWidgets.dataframeToD3(x.dat)
+        let names = Object.keys(x.dat)
 
-        this.svg = beeswarm(el.id, data, x.xIsAvisit, x.uniqAlertCat, x.xDomain, this.svg);
+        let outData = {
+          patientId: names,
+          patientData: data
+        }
+
+        // Make sure uniqAlertCat is an array when there's only 1 item
+        let uniqAlertCat = x.uniqAlertCat
+
+        if (!Array.isArray(uniqAlertCat)) {
+          uniqAlertCat = [uniqAlertCat]
+        } 
+        
+        this.svg = beeswarm(el.id, outData, x.xIsAvisit, uniqAlertCat, x.xDomain, this.svg, x.overallView);
       },
 
       resize: function(width, height) {

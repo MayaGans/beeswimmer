@@ -1,7 +1,8 @@
 #' @import htmlwidgets
+#' @importFrom dplyr %>%
 #'
 #' @export
-beeswimmer <- function(data, unique_alert_cat, width = NULL, height = NULL, elementId = NULL) {
+beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, width = NULL, height = NULL, elementId = NULL) {
 
   # Determine if X is in AVISIT (is factor) or ADY (is dbl)
 
@@ -10,24 +11,51 @@ beeswimmer <- function(data, unique_alert_cat, width = NULL, height = NULL, elem
   if (x_is_avisit) {
     x_domain <- levels(data$timing)
   } else {
-    x_domain <- c(min(data$timing), max(data$timing))
+    # Make sure last_collected is part of the x scale, if it is larger than the bubbles' x
+    # Throwing it in min also, JUST in case
+    last_collected  <- unique(data$last_collected)
+    x_domain <- c(min(min(data$timing), last_collected), max(max(data$timing), last_collected))
   }
 
-  # forward options using x
-  x = list(
-    dat = data,
+  if (is.null(unique_alert_cat)) {
+    unique_alert_cat <- levels(data[["body_part"]])
+  }
+  
+  data <- data %>%
+    # Bigger bubbles are plotted first
+    # This gets reset when hovering, due to z-index = 9999 css
+    dplyr::arrange(rowid, timing, dplyr::desc(flag_score)) %>%
+    ## Whether the bubble is the biggest in its cluster
+    dplyr::group_by(rowid) %>%
+    dplyr::mutate(
+      max_flag_score = max(flag_score),
+      is_max_flag_score = flag_score == max(flag_score)
+    ) %>%
+    dplyr::ungroup()
+
+    
+
+  # a list of dataframes, where each list is a specific alert event
+  # In this group, there's at least 1 row (original event), plus more rows if it caused AESI or DLT
+  data_split <- lapply(split(data, data$patient), function(x) {split(x, x$rowid)})
+  # data_split <- split(data, data$rowid)
+    # forward options using x
+
+  x <- list(
+    dat = data_split,
     xDomain = x_domain,
     uniqAlertCat = unique_alert_cat,
-    xIsAvisit = x_is_avisit
+    xIsAvisit = x_is_avisit,
+    overallView = overall_view
   )
 
   # create widget
   htmlwidgets::createWidget(
-    name = 'beeswimmer',
+    name = "beeswimmer",
     x,
     width = width,
     height = height,
-    package = 'beeswimmer',
+    package = "beeswimmer",
     elementId = elementId
   )
 }
@@ -35,12 +63,13 @@ beeswimmer <- function(data, unique_alert_cat, width = NULL, height = NULL, elem
 
 #' @importFrom htmltools tags
 beeswimmer_html <- function(...) {
-  tags$div(
+  htmltools::tags$div(
     ...,
-    tags$div(class = "legend"),
-    tags$div(class = "wrapper"),
-    tags$div(class = "tooltip"),
-    tags$div(class = "xaxis")
+    htmltools::tags$div(class = "legend"),
+    htmltools::tags$div(class = "beeswimmer-wrapper"),
+    htmltools::tags$div(class = "tooltip"),
+    htmltools::tags$div(class = "line-tooltip"),
+    htmltools::tags$div(class = "xaxis")
   )
 }
 

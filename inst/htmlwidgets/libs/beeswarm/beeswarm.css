@@ -2,10 +2,6 @@ body {
     margin: 0
 }
 
-#wrapper {
-    position: relative;
-}
-
 .patient-lane {
     display: grid;
     grid-template-columns: 100px 1fr;
@@ -25,16 +21,6 @@ body {
     align-items: center;
 }
 
-.tooltip {
-    opacity: 0;
-    position: absolute;
-    background: #fff;
-    border: 1px solid #ddd;
-    z-index: 10;
-    transition: all 0.2s ease-out;
-    pointer-events: none;
-}
-
 .xaxis {
     background: white !important;
     position: sticky;
@@ -50,6 +36,17 @@ body {
 .xaxis svg {
     z-index: 10000;
     overflow: visible !important;
+}
+
+.tooltip,
+.line-tooltip {
+    opacity: 0;
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    z-index: 10;
+    transition: all 0.2s ease-out;
+    pointer-events: none;
 }
 
 .custom-tooltip,

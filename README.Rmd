@@ -1,0 +1,52 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# beeswimmer
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of beeswimmer is to ...
+
+## Installation
+
+You can install the development version of beeswimmer from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("jiwanheo/beeswimmer")
+```
+
+## Shiny Example
+
+```{r eval=FALSE}
+library(shiny)
+
+ui <- fluidPage(
+  htmltools::tags$h1("This is a shiny app"),
+  beeswimmer::beeswimmerOutput("plot")
+)
+
+server <- function(input, output, session) {
+  output$plot <- beeswimmer::renderBeeswimmer({
+    beeswimmer::beeswimmer(
+      beeswimmer::ady_data
+    )
+  })
+}
+
+shinyApp(ui, server)
+
+```
