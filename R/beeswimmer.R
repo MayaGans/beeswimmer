@@ -2,7 +2,7 @@
 #' @importFrom dplyr %>%
 #'
 #' @export
-beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, width = NULL, height = NULL, elementId = NULL) {
+beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, width = NULL, height = NULL, elementId = NULL, legend_title = "") {
 
   # Determine if X is in AVISIT (is factor) or ADY (is dbl)
 
@@ -20,7 +20,7 @@ beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, widt
   if (is.null(unique_alert_cat)) {
     unique_alert_cat <- levels(data[["body_part"]])
   }
-  
+
   data <- data %>%
     # Bigger bubbles are plotted first
     # This gets reset when hovering, due to z-index = 9999 css
@@ -33,7 +33,7 @@ beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, widt
     ) %>%
     dplyr::ungroup()
 
-    
+
 
   # a list of dataframes, where each list is a specific alert event
   # In this group, there's at least 1 row (original event), plus more rows if it caused AESI or DLT
@@ -46,7 +46,8 @@ beeswimmer <- function(data, unique_alert_cat = NULL, overall_view = FALSE, widt
     xDomain = x_domain,
     uniqAlertCat = unique_alert_cat,
     xIsAvisit = x_is_avisit,
-    overallView = overall_view
+    overallView = overall_view,
+    legend_title = legend_title
   )
 
   # create widget

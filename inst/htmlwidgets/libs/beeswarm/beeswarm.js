@@ -5,7 +5,7 @@ d3.selection.prototype.moveToFront = function() {
 };
 
 
-function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallView) {
+function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallView, legendTitle) {
 
   function createScales(xIsAvisit, xDomain) {
       let scales = {
@@ -65,28 +65,40 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallVi
       // brightness turned up to 70
       .range(["#9088dd", "#da8bb3", "#9cc9c0", "#ce97c9", "#7dbfe8", "#d3929c", "#dfd286"])
 
-    function createLegend(el, categories, colorScale) {
+    function createLegend(el, categories, colorScale, legendTitle) {
 
-      const legend = d3
+console.log(legendTitle)
+
+      const all_legend = d3
         .select(`#${el} .legend`)
-        .selectAll("div")
+        .style('gap', '12px')
+
+      all_legend.append('span')
+        .text(legendTitle)
+        .style('font-weight', 600)
+
+      const legend_el = all_legend.selectAll("div")
         .data(categories)
         .enter()
         .append('div')
-        .append('svg')
-        .attr('height', 30)
-        .attr('width', d => d.length*8.5 + 30)
+        .style('display', 'flex')
+        .style('align-items', 'center')
+        .style('justify-content', 'start')
+        .style('gap', '7px')
 
-      let circle = legend.append('circle')
+      let legend_svg = legend_el.append('svg')
+        .attr('height', 14)
+        .attr('width', 14)
+
+      let circle = legend_svg.append('circle')
         .attr('r', 7)
-        .attr('cx', 20)
-        .attr('cy', 20)
+        .attr('cx', 7)
+        .attr('cy', 7)
         .attr('fill', d => colorScale(d))
         .attr('class', 'legend-circle')
 
-      let text = legend.append('text')
+      let text = legend_el.append('span')
         .text(d => d)
-        .attr('transform', (d, i) => `translate(40,25)`)
 
        // legend.on('click', subsetGraph)
 
@@ -202,7 +214,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallVi
 
       // Last Collected queue (black vertical line)
       const lastCollectedData = data.map(arr => arr[0]).slice(0, 1)
-      
+
       const lastCollected = bounds.append("g")
         .attr("class", "last-collected-queue")
         .selectAll("line")
@@ -454,7 +466,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallVi
         // All the rest, tooltip goes to the right of the line
         lineTooltipOffset = 0
       }
-      
+
       lineTooltip
         .style("left", lineCenterX + "px")
         .style("top", lineCenterY + "px")
@@ -498,7 +510,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallVi
         colorScale,
         overallView
      )
-     
+
     } else {
       for (let i = 0; i < data.patientData.length; i++) {
         bubbleChart(
@@ -514,7 +526,7 @@ function beeswarm(el, data, xIsAvisit, uniqAlertCat, xDomain, currSvg, overallVi
       }
     }
 
-    createLegend(el, uniqAlertCat, colorScale)
+    createLegend(el, uniqAlertCat, colorScale, legendTitle)
     createXAxis(el, xIsAvisit, xDomain, importantAvisits)
 
 }

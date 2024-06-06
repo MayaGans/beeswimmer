@@ -32,9 +32,18 @@ HTMLWidgets.widget({
 
         if (!Array.isArray(uniqAlertCat)) {
           uniqAlertCat = [uniqAlertCat]
-        } 
-        
-        this.svg = beeswarm(el.id, outData, x.xIsAvisit, uniqAlertCat, x.xDomain, this.svg, x.overallView);
+        }
+
+        this.svg = beeswarm(
+          el.id,
+          outData,
+          x.xIsAvisit,
+          uniqAlertCat,
+          x.xDomain,
+          this.svg,
+          x.overallView,
+          x.legend_title
+        );
       },
 
       resize: function(width, height) {
